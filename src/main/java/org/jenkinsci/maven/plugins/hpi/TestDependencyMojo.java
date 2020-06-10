@@ -41,7 +41,13 @@ public class TestDependencyMojo extends AbstractHpiMojo {
 
                 getLog().debug("Copying " + artifactId + " as a test dependency");
                 File dst = new File(testDir, artifactId + ".hpi");
-                FileUtils.copyFile(a.getHpi().getFile(),dst);
+                if (!a.getFile().isDirectory()) {
+                    // The original behavior
+                    FileUtils.copyFile(a.getHpi().getFile(), dst);
+                } else {
+                    getLog().info("--> Destination " + a.getHpi().getFile().toString() + "\n for " + artifactId + " is a directory.");
+                    FileUtils.copyFileToDirectory(dst, a.getHpi().getFile());
+                }
                 w.write(artifactId + "\n");
             }
 
